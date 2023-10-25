@@ -1,23 +1,28 @@
-elf.cache_data.key()[-1]IFOCache(BaseCaching):
-    """ A class that initializes the put and get
-    in First in first format
-    """
+#!/usr/bin/python3
+"""Create FIFOCache class that inherits from BaseCaching"""
+BaseCaching = __import__('base_caching').BaseCaching
+
+
+class FIFOCache(BaseCaching):
+    """ Define FIFOCache """
+
     def __init__(self):
+        """ Initialize FIFOCache """
+        self.queue = []
         super().__init__()
 
     def put(self, key, item):
-        """ appends key value to cache_data
-        Discards the first item if Max is reached
-        """
-        if key is None or item is None:
-            return
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            discarded = list(self.cache_data.keys())[-1]
-            print(f"DISCARD: {discarded}")
-            self.cache_data.pop(discarded)
-        self.cache_data[key] = item
+        """ Assign the item to the dictionary """
+        if key and item:
+            if self.cache_data.get(key):
+                self.queue.remove(key)
+            self.queue.append(key)
+            self.cache_data[key] = item
+            if len(self.queue) > self.MAX_ITEMS:
+                delete = self.queue.pop(0)
+                self.cache_data.pop(delete)
+                print('DISCARD: {}'.format(delete))
 
     def get(self, key):
-        """ Funtion to get a key from cache_data
-        """
-        return self.cache_data.get(key, None)
+        """ Output the value associated with the given key """
+        return self.cache_data.get(key)
